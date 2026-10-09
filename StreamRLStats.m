@@ -24,8 +24,8 @@ shots      = uilabel(gameStatPanel,'Position',[418.500 10 92.125 50],'Horizontal
 uilabel(gameStatPanel,'Position',[418.500 70 92.125 50],'Text','SHOTS','HorizontalAlignment','center','FontSize',18,'FontColor','w');
 demos      = uilabel(gameStatPanel,'Position',[520.625 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','w','Text','0');
 uilabel(gameStatPanel,'Position',[520.625 70 92.125 50],'Text','DEMOS','HorizontalAlignment','center','FontSize',18,'FontColor','w');
-touches    = uilabel(gameStatPanel,'Position',[622.750 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','w','Text','0');
-uilabel(gameStatPanel,'Position',[622.750 70 92.125 50],'Text','TOUCHES','HorizontalAlignment','center','FontSize',18,'FontColor','w');
+ballTouches    = uilabel(gameStatPanel,'Position',[622.750 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','w','Text','0');
+uilabel(gameStatPanel,'Position',[622.750 70 92.125 50],'Text','BALL TOUCHES','HorizontalAlignment','center','FontSize',18,'FontColor','w');
 carTouches = uilabel(gameStatPanel,'Position',[724.875 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','w','Text','0');
 uilabel(gameStatPanel,'Position',[724.875 70 92.125 50],'Text','CAR TOUCHES','HorizontalAlignment','center','FontSize',18,'FontColor','w','WordWrap','on');
 
@@ -65,7 +65,7 @@ while true
         saves.Text      = string(dataOut.Saves);
         shots.Text      = string(dataOut.Shots);
         demos.Text      = string(dataOut.Demos);
-        touches.Text    = string(dataOut.Touches);
+        ballTouches.Text    = string(dataOut.Touches);
         carTouches.Text = string(dataOut.CarTouches);
 
         carSpeed.Value = dataOut.Speed;
