@@ -4,7 +4,7 @@ configs.player = 'BigFuzz11';
 
 configs.connIn.host = '127.0.0.1';
 configs.connIn.port = 49123;
-configs.connIn.timeout_seconds = 10;
+configs.connIn.timeout_seconds = 2;
 
 end
 

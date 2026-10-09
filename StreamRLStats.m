@@ -46,54 +46,51 @@ carBoost = uigauge(carStatPanel,"Limits",[0 100],'Position',[418.5 10 398.5 398.
     'ScaleColorLimits',[0 30; 30 60; 60 100],'ScaleColors',["red","yellow","green"]);
 uilabel(carStatPanel,'Position',[567.75 40 100 50],'Text','BOOST','HorizontalAlignment','center','FontColor','w','FontSize',25,'FontWeight','bold');
 
-gameStatus = uitextarea(carStatPanel,'Position',[338.5 383.5 150 25],'Value','Waiting for Game to Start','HorizontalAlignment','center','BackgroundColor','red','FontColor','w');
+gameStatus = uitextarea(carStatPanel,'Position',[338.5 396 175 25],'Value','Waiting for Game to Launch','HorizontalAlignment','center','BackgroundColor','red','FontColor','w');
 
 pause(2);
 jsonErr = 0;
-try
-    client = connectRL(connIn);
-    while true
-        try
-            
-            dataOut = getRL_Data(client,player);
-            jsonErr = 0;
-            gameStatus.BackgroundColor = 'green';
-            gameStatus.Value = 'Game is Connected';
+client = connectRL(connIn);
+
+while true
+    try
+
+        dataOut = getRL_Data(client,player);
+        jsonErr = 0;
+        gameStatus.BackgroundColor = 'green';
+        gameStatus.Value = 'Game is Connected';
+        gameStatus.Position = [338.5 383.5 150 25];
+        score.Text      = string(dataOut.Score);
+        goals.Text      = string(dataOut.Goals);
+        assists.Text    = string(dataOut.Assists);
+        saves.Text      = string(dataOut.Saves);
+        shots.Text      = string(dataOut.Shots);
+        demos.Text      = string(dataOut.Demos);
+        touches.Text    = string(dataOut.Touches);
+        carTouches.Text = string(dataOut.CarTouches);
+
+        carSpeed.Value = dataOut.Speed;
+        carBoost.Value = dataOut.Boost;
+    catch JSON_ERR
+        jsonErr = jsonErr+1;
+        if jsonErr > 100
+            gameStatus.BackgroundColor = 'red';
+            gameStatus.Value = 'Waiting for Match to Start';
             gameStatus.Position = [338.5 383.5 150 25];
-            score.Text      = string(dataOut.Score);
-            goals.Text      = string(dataOut.Goals);
-            assists.Text    = string(dataOut.Assists);
-            saves.Text      = string(dataOut.Saves);
-            shots.Text      = string(dataOut.Shots);
-            demos.Text      = string(dataOut.Demos);
-            touches.Text    = string(dataOut.Touches);
-            carTouches.Text = string(dataOut.CarTouches);
+            % score.Value      = string(0);
+            % goals.Value      = string(0);
+            % assists.Value    = string(0);
+            % saves.Value      = string(0);
+            % shots.Value      = string(0);
+            % demos.Value      = string(0);
+            % touches.Value    = string(0);
+            % carTouches.Value = string(0);
 
-            carSpeed.Value = dataOut.Speed;
-            carBoost.Value = dataOut.Boost;
-        catch JSON_ERR
-            jsonErr = jsonErr+1;
-            if jsonErr > 100
-                gameStatus.BackgroundColor = 'red';
-                gameStatus.Value = 'Waiting for Game to Start';
-                gameStatus.Position = [338.5 383.5 150 25];
-                % score.Value      = string(0);
-                % goals.Value      = string(0);
-                % assists.Value    = string(0);
-                % saves.Value      = string(0);
-                % shots.Value      = string(0);
-                % demos.Value      = string(0);
-                % touches.Value    = string(0);
-                % carTouches.Value = string(0);
-
-                carSpeed.Value = 0;
-                carBoost.Value = 0;
-            end
+            carSpeed.Value = 0;
+            carBoost.Value = 0;
         end
-        pause(0.01); % Yield to the system to maintain 100Hz processing loop
     end
-
-catch CONN_ERR
-    error('Could not connect to Rocket League. Ensure the game is running and TAStatsAPI.ini is configured.');
+    pause(0.01); % Yield to the system to maintain 100Hz processing loop
 end
+
 end
