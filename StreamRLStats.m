@@ -1,9 +1,10 @@
 function StreamRLStats()
+
 addpath(genpath(pwd));
-player = 'BigFuzz11';
-connIn.host = '127.0.0.1';
-connIn.port = 49123;
-connIn.timeout_seconds = 10;
+
+configs = RLConfigs();
+player = configs.player;
+connIn = configs.connIn;
 
 mainFig = uifigure('Position',[2561 300 847 588.5],'Resize','off','Color',[.2 .2 .2]);
 gameStatPanel = uipanel(mainFig,'Position',[10 448.8750 827 130],'BackgroundColor','k','BorderColor','k');
