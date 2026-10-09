@@ -80,6 +80,7 @@ while true
             gameOver = false;
         end
         gameStatus.BackgroundColor = 'green';
+        gameStatus.FontColor = 'white';
         gameStatus.Value = 'Match has Started';
         score.Text      = string(playerData.Score);
         goals.Text      = string(playerData.Goals);
@@ -118,6 +119,7 @@ while true
             end
             gameOver = true;
             gameStatus.BackgroundColor = 'yellow';
+            gameStatus.FontColor = 'black';
             gameStatus.Value = 'Match has Ended';
         end
 
@@ -126,7 +128,8 @@ while true
     catch JSON_ERR
         jsonErr = jsonErr+1;
         if jsonErr > 100
-            gameStatus.BackgroundColor = 'red';
+            gameStatus.BackgroundColor = 'yellow';
+            gameStatus.FontColor = 'black';
             gameStatus.Value = 'Waiting for Match to Start';
             % score.Value      = string(0);
             % goals.Value      = string(0);
