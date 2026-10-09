@@ -59,7 +59,6 @@ while true
         jsonErr = 0;
         gameStatus.BackgroundColor = 'green';
         gameStatus.Value = 'Game is Connected';
-        gameStatus.Position = [338.5 383.5 150 25];
         score.Text      = string(dataOut.Score);
         goals.Text      = string(dataOut.Goals);
         assists.Text    = string(dataOut.Assists);
@@ -76,7 +75,6 @@ while true
         if jsonErr > 100
             gameStatus.BackgroundColor = 'red';
             gameStatus.Value = 'Waiting for Match to Start';
-            gameStatus.Position = [338.5 383.5 150 25];
             % score.Value      = string(0);
             % goals.Value      = string(0);
             % assists.Value    = string(0);
