@@ -5,29 +5,46 @@ addpath(genpath(pwd));
 configs = RLConfigs();
 player = configs.player;
 connIn = configs.connIn;
+gameOver = false;
+streakNum = 0;
+winNum       = 0;
+lossNum     = 0;
 
-mainFig = uifigure('Position',[2561 300 847 588.5],'Resize','off','Color',[.2 .2 .2]);
-gameStatPanel = uipanel(mainFig,'Position',[10 448.8750 827 130],'BackgroundColor','k','BorderColor','k');
+mainFig = uifigure('Position',[2561 300 847 728.5],'Resize','off','Color',[.2 .2 .2]);
+
+gameStatPanel = uipanel(mainFig,'Position',[10 588.8750 827 130],'BackgroundColor','k','BorderColor','k');
 bckground1 = axes(gameStatPanel,'Position',[0 0 1 1],'Units','normalized');
 img = imread('galaxy.jpg');
 imshow(img, 'Parent', bckground1, 'XData', [0 827], 'YData', [0 130]);
 
-score      = uilabel(gameStatPanel,'Position',[10.0000 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','w','Text','0');
-uilabel(gameStatPanel,'Position',[10.0000 70 92.125 50],'Text','SCORE','HorizontalAlignment','center','FontSize',18,'FontColor','w');
-goals      = uilabel(gameStatPanel,'Position',[112.125 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','w','Text','0');
-uilabel(gameStatPanel,'Position',[112.125 70 92.125 50],'Text','GOALS','HorizontalAlignment','center','FontSize',18,'FontColor','w');
-assists    = uilabel(gameStatPanel,'Position',[214.250 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','w','Text','0');
-uilabel(gameStatPanel,'Position',[214.250 70 92.125 50],'Text','ASSISTS','HorizontalAlignment','center','FontSize',18,'FontColor','w');
-saves      = uilabel(gameStatPanel,'Position',[316.375 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','w','Text','0');
-uilabel(gameStatPanel,'Position',[316.375 70 92.125 50],'Text','SAVES','HorizontalAlignment','center','FontSize',20,'FontColor','w');
-shots      = uilabel(gameStatPanel,'Position',[418.500 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','w','Text','0');
-uilabel(gameStatPanel,'Position',[418.500 70 92.125 50],'Text','SHOTS','HorizontalAlignment','center','FontSize',18,'FontColor','w');
-demos      = uilabel(gameStatPanel,'Position',[520.625 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','w','Text','0');
-uilabel(gameStatPanel,'Position',[520.625 70 92.125 50],'Text','DEMOS','HorizontalAlignment','center','FontSize',18,'FontColor','w');
-ballTouches    = uilabel(gameStatPanel,'Position',[622.750 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','w','Text','0');
-uilabel(gameStatPanel,'Position',[622.750 70 92.125 50],'Text','BALL TOUCHES','HorizontalAlignment','center','FontSize',18,'FontColor','w','WordWrap','on');
-carTouches = uilabel(gameStatPanel,'Position',[724.875 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','w','Text','0');
-uilabel(gameStatPanel,'Position',[724.875 70 92.125 50],'Text','CAR TOUCHES','HorizontalAlignment','center','FontSize',18,'FontColor','w','WordWrap','on');
+wins      = uilabel(gameStatPanel,'Position',[10.0000 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text',string(winNum));
+uilabel(gameStatPanel,'Position',[10.0000 70 92.125 50],'Text','WINS','HorizontalAlignment','center','FontSize',18,'FontColor','y');
+losses      = uilabel(gameStatPanel,'Position',[112.125 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text',string(lossNum));
+uilabel(gameStatPanel,'Position',[112.125 70 92.125 50],'Text','LOSSES','HorizontalAlignment','center','FontSize',18,'FontColor','y');
+streak    = uilabel(gameStatPanel,'Position',[214.250 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text',string(streakNum));
+uilabel(gameStatPanel,'Position',[214.250 70 92.125 50],'Text','STREAK','HorizontalAlignment','center','FontSize',18,'FontColor','y');
+
+playerStatPanel = uipanel(mainFig,'Position',[10 448.8750 827 130],'BackgroundColor','k','BorderColor','k');
+bckground1 = axes(playerStatPanel,'Position',[0 0 1 1],'Units','normalized');
+img = imread('galaxy.jpg');
+imshow(img, 'Parent', bckground1, 'XData', [0 827], 'YData', [0 130]);
+
+score      = uilabel(playerStatPanel,'Position',[10.0000 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text','0');
+uilabel(playerStatPanel,'Position',[10.0000 70 92.125 50],'Text','SCORE','HorizontalAlignment','center','FontSize',18,'FontColor','y');
+goals      = uilabel(playerStatPanel,'Position',[112.125 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text','0');
+uilabel(playerStatPanel,'Position',[112.125 70 92.125 50],'Text','GOALS','HorizontalAlignment','center','FontSize',18,'FontColor','y');
+assists    = uilabel(playerStatPanel,'Position',[214.250 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text','0');
+uilabel(playerStatPanel,'Position',[214.250 70 92.125 50],'Text','ASSISTS','HorizontalAlignment','center','FontSize',18,'FontColor','y');
+saves      = uilabel(playerStatPanel,'Position',[316.375 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text','0');
+uilabel(playerStatPanel,'Position',[316.375 70 92.125 50],'Text','SAVES','HorizontalAlignment','center','FontSize',20,'FontColor','y');
+shots      = uilabel(playerStatPanel,'Position',[418.500 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text','0');
+uilabel(playerStatPanel,'Position',[418.500 70 92.125 50],'Text','SHOTS','HorizontalAlignment','center','FontSize',18,'FontColor','y');
+demos      = uilabel(playerStatPanel,'Position',[520.625 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text','0');
+uilabel(playerStatPanel,'Position',[520.625 70 92.125 50],'Text','DEMOS','HorizontalAlignment','center','FontSize',18,'FontColor','y');
+ballTouches    = uilabel(playerStatPanel,'Position',[622.750 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text','0');
+uilabel(playerStatPanel,'Position',[622.750 70 92.125 50],'Text','TOUCHES','HorizontalAlignment','center','FontSize',18,'FontColor','y','WordWrap','on');
+carTouches = uilabel(playerStatPanel,'Position',[724.875 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text','0');
+uilabel(playerStatPanel,'Position',[724.875 70 92.125 50],'Text','BUMPS','HorizontalAlignment','center','FontSize',18,'FontColor','y','WordWrap','on');
 
 
 carStatPanel = uipanel(mainFig,'Position',[10 10 827 428.8750],'BackgroundColor','k','BorderColor','k');
@@ -55,21 +72,57 @@ client = connectRL(connIn);
 while true
     try
 
-        dataOut = getRL_Data(client,player);
+        [playerData,gameData] = getRL_Data(client,player);
         jsonErr = 0;
+        if gameData.bHasWinner && gameOver
+            continue;
+        elseif ~gameData.bHasWinner && gameOver
+            gameOver = false;
+        end
         gameStatus.BackgroundColor = 'green';
-        gameStatus.Value = 'Game is Connected';
-        score.Text      = string(dataOut.Score);
-        goals.Text      = string(dataOut.Goals);
-        assists.Text    = string(dataOut.Assists);
-        saves.Text      = string(dataOut.Saves);
-        shots.Text      = string(dataOut.Shots);
-        demos.Text      = string(dataOut.Demos);
-        ballTouches.Text    = string(dataOut.Touches);
-        carTouches.Text = string(dataOut.CarTouches);
+        gameStatus.Value = 'Match has Started';
+        score.Text      = string(playerData.Score);
+        goals.Text      = string(playerData.Goals);
+        assists.Text    = string(playerData.Assists);
+        saves.Text      = string(playerData.Saves);
+        shots.Text      = string(playerData.Shots);
+        demos.Text      = string(playerData.Demos);
+        ballTouches.Text    = string(playerData.Touches);
+        carTouches.Text = string(playerData.CarTouches);
 
-        carSpeed.Value = dataOut.Speed;
-        carBoost.Value = dataOut.Boost;
+        carSpeed.Value = playerData.Speed;
+        carBoost.Value = playerData.Boost;
+
+
+        if gameData.bHasWinner
+            winnerIdx = find(strcmp(gameData.Winner,{gameData.Teams.Name}));
+            didWin = playerData.TeamNum == gameData.Teams(winnerIdx).TeamNum;
+            if didWin
+                winNum = winNum+1;
+                wins.Text = string(winNum);
+                if streakNum >= 0
+                    streakNum = streakNum+1;
+                else
+                    streakNum = 1;
+                end
+                streak.Text = "+"+string(streakNum);
+            else
+                lossNum = lossNum+1;
+                losses.Text = string(lossNum);
+                if streakNum <= 0
+                    streakNum = streakNum-1;
+                else
+                    streakNum = -1;
+                end
+                streak.Text = string(streakNum);
+            end
+            gameOver = true;
+            gameStatus.BackgroundColor = 'yellow';
+            gameStatus.Value = 'Match has Ended';
+        end
+
+
+
     catch JSON_ERR
         jsonErr = jsonErr+1;
         if jsonErr > 100

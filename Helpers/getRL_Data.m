@@ -1,4 +1,4 @@
-function dataOut = getRL_Data(client,player)
+function [playerData,gameData] = getRL_Data(client,player)
 
 if client.NumBytesAvailable > 0
     % Read the raw stream data
@@ -27,12 +27,15 @@ if client.NumBytesAvailable > 0
                                 break;
                             end
                             end
-                            dataOut = playerSelected;
+                            playerData = playerSelected;
                         else
-                            dataOut = player_list(1);
+                            playerData = player_list(1);
                         end
-                        dataOut.Speed = dataOut.Speed*0.621371;                        
+                        playerData.Speed = playerData.Speed*0.621371;                        
                     end
+                end
+                if isfield(Data, 'Game')
+                    gameData = Data.Game;                    
                 end
             end
         end    
