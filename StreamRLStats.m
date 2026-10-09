@@ -24,6 +24,14 @@ uilabel(gameStatPanel,'Position',[112.125 70 92.125 50],'Text','LOSSES','Horizon
 streak    = uilabel(gameStatPanel,'Position',[214.250 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text',string(streakNum));
 uilabel(gameStatPanel,'Position',[214.250 70 92.125 50],'Text','STREAK','HorizontalAlignment','center','FontSize',18,'FontColor','y');
 
+teammate1    = uilabel(gameStatPanel,'Position',[316.375 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text','');
+teammate1Label = uilabel(gameStatPanel,'Position',[316.375 70 92.125 50],'HorizontalAlignment','center','FontSize',18,'FontColor','y','Text','','WordWrap','on');
+teammate2    = uilabel(gameStatPanel,'Position',[418.500 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text','');
+teammate2Label = uilabel(gameStatPanel,'Position',[418.500 70 92.125 50],'HorizontalAlignment','center','FontSize',18,'FontColor','y','Text','','WordWrap','on');
+teammate3    = uilabel(gameStatPanel,'Position',[520.625 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text','');
+teammate3Label = uilabel(gameStatPanel,'Position',[520.625 70 92.125 50],'HorizontalAlignment','center','FontSize',18,'FontColor','y','Text','','WordWrap','on');
+
+
 playerStatPanel = uipanel(mainFig,'Position',[10 448.8750 827 130],'BackgroundColor','k','BorderColor','k');
 bckground1 = axes(playerStatPanel,'Position',[0 0 1 1],'Units','normalized');
 img = imread('galaxy.jpg');
@@ -71,13 +79,21 @@ client = connectRL(connIn);
 
 while true
     try
-
-        [playerData,gameData] = getRL_Data(client,player);
+        [playerData,teammateData,gameData] = getRL_Data(client,player);
         jsonErr = 0;
         if gameData.bHasWinner && gameOver
             continue;
         elseif ~gameData.bHasWinner && gameOver
+            
             gameOver = false;
+        end
+        if isequal(gameStatus.BackgroundColor,[1 0 0]) || isequal(gameStatus.BackgroundColor,[0 1 0]) 
+            teammate1.Text      = '';
+            teammate1Label.Text = '';
+            teammate2.Text      = '';
+            teammate2Label.Text = '';
+            teammate3.Text      = '';
+            teammate3Label.Text = '';
         end
         gameStatus.BackgroundColor = 'green';
         gameStatus.FontColor = 'white';
@@ -93,6 +109,22 @@ while true
 
         carSpeed.Value = playerData.Speed;
         carBoost.Value = playerData.Boost;
+
+        if ~isempty(teammateData)
+            for teammateNum = 1:numel(teammateData)
+                switch teammateNum
+                    case 1
+                        teammate1.Text      = string(teammateData(teammateNum).Score);
+                        teammate1Label.Text = teammateData(teammateNum).Name;
+                    case 2
+                        teammate2.Text      = string(teammateData(teammateNum).Score);
+                        teammate2Label.Text = teammateData(teammateNum).Name;
+                    case 3
+                        teammate3.Text      = string(teammateData(teammateNum).Score);
+                        teammate3Label.Text = teammateData(teammateNum).Name;
+                end
+            end
+        end
 
 
         if gameData.bHasWinner

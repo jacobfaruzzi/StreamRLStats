@@ -1,4 +1,4 @@
-function [playerData,gameData] = getRL_Data(client,player)
+function [playerData,teammateData,gameData] = getRL_Data(client,player)
 
 if client.NumBytesAvailable > 0
     % Read the raw stream data
@@ -27,7 +27,20 @@ if client.NumBytesAvailable > 0
                                 break;
                             end
                             end
+                            teammateData = [];
                             playerData = playerSelected;
+                            playerIdx = i;
+                            playerTeam = playerData.TeamNum;
+                            players = 1:numel(player_list);
+                            players = players(players ~= playerIdx);
+                            idx = 0;
+                            for j = players
+                                if player_list{j}.TeamNum == playerTeam
+                                    idx = idx+1;
+                                    teammateData(idx).Name = player_list{j}.Name;
+                                    teammateData(idx).Score = player_list{j}.Score;
+                                end
+                            end
                         else
                             playerData = player_list(1);
                         end
