@@ -2,15 +2,15 @@ function StreamRLStats()
 
 addpath(genpath(pwd));
 
-configs = RLConfigs();
-player = configs.player;
-connIn = configs.connIn;
-gameOver = false;
+configs   = RLConfigs();
+player    = configs.player;
+connIn    = configs.connIn;
+gameOver  = false;
 streakNum = 0;
-winNum       = 0;
-lossNum     = 0;
+winNum    = 0;
+lossNum   = 0;
 
-mainFig = uifigure('Position',[2561 300 847 728.5],'Resize','off','Color',[.2 .2 .2]);
+mainFig = uifigure('Position',[2561 300 847 728.5],'Resize','off','Color',[.2 .2 .2],'WindowStyle','alwaysontop','Name','Rocket Leauge Stats');
 
 gameStatPanel = uipanel(mainFig,'Position',[10 588.8750 827 130],'BackgroundColor','k','BorderColor','k');
 bckground1 = axes(gameStatPanel,'Position',[0 0 1 1],'Units','normalized');
@@ -23,14 +23,14 @@ losses      = uilabel(gameStatPanel,'Position',[112.125 10 92.125 50],'Horizonta
 uilabel(gameStatPanel,'Position',[112.125 70 92.125 50],'Text','LOSSES','HorizontalAlignment','center','FontSize',18,'FontColor','y');
 streak    = uilabel(gameStatPanel,'Position',[214.250 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text',string(streakNum));
 uilabel(gameStatPanel,'Position',[214.250 70 92.125 50],'Text','STREAK','HorizontalAlignment','center','FontSize',18,'FontColor','y');
-
-teammate1    = uilabel(gameStatPanel,'Position',[316.375 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text','');
-teammate1Label = uilabel(gameStatPanel,'Position',[316.375 70 92.125 50],'HorizontalAlignment','center','FontSize',18,'FontColor','y','Text','','WordWrap','on');
-teammate2    = uilabel(gameStatPanel,'Position',[418.500 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text','');
-teammate2Label = uilabel(gameStatPanel,'Position',[418.500 70 92.125 50],'HorizontalAlignment','center','FontSize',18,'FontColor','y','Text','','WordWrap','on');
-teammate3    = uilabel(gameStatPanel,'Position',[520.625 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text','');
-teammate3Label = uilabel(gameStatPanel,'Position',[520.625 70 92.125 50],'HorizontalAlignment','center','FontSize',18,'FontColor','y','Text','','WordWrap','on');
-
+ball    = uilabel(gameStatPanel,'Position',[316.375 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text','0');
+uilabel(gameStatPanel,'Position',[316.375 70 92.125 50],'Text','BALL SPEED','HorizontalAlignment','center','FontSize',18,'FontColor','y','WordWrap','on');
+teammate1    = uilabel(gameStatPanel,'Position',[418.500 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text','');
+teammate1Label = uilabel(gameStatPanel,'Position',[418.500 70 92.125 50],'HorizontalAlignment','center','FontSize',18,'FontColor','y','Text','','WordWrap','on');
+teammate2    = uilabel(gameStatPanel,'Position',[520.625 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text','');
+teammate2Label = uilabel(gameStatPanel,'Position',[520.625 70 92.125 50],'HorizontalAlignment','center','FontSize',18,'FontColor','y','Text','','WordWrap','on');
+teammate3    = uilabel(gameStatPanel,'Position',[622.750 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text','');
+teammate3Label = uilabel(gameStatPanel,'Position',[622.750 70 92.125 50],'HorizontalAlignment','center','FontSize',18,'FontColor','y','Text','','WordWrap','on');
 
 playerStatPanel = uipanel(mainFig,'Position',[10 448.8750 827 130],'BackgroundColor','k','BorderColor','k');
 bckground1 = axes(playerStatPanel,'Position',[0 0 1 1],'Units','normalized');
@@ -106,10 +106,9 @@ while true
         demos.Text      = string(playerData.Demos);
         ballTouches.Text    = string(playerData.Touches);
         carTouches.Text = string(playerData.CarTouches);
-
+        ball.Text = sprintf('%.2f',gameData.Ball.Speed);
         carSpeed.Value = playerData.Speed;
         carBoost.Value = playerData.Boost;
-
         if ~isempty(teammateData)
             for teammateNum = 1:numel(teammateData)
                 switch teammateNum
@@ -125,8 +124,6 @@ while true
                 end
             end
         end
-
-
         if gameData.bHasWinner
             winnerIdx = find(strcmp(gameData.Winner,{gameData.Teams.Name}));
             didWin = playerData.TeamNum == gameData.Teams(winnerIdx).TeamNum;
@@ -154,29 +151,16 @@ while true
             gameStatus.FontColor = 'black';
             gameStatus.Value = 'Match has Ended';
         end
-
-
-
     catch JSON_ERR
         jsonErr = jsonErr+1;
         if jsonErr > 100
             gameStatus.BackgroundColor = 'yellow';
             gameStatus.FontColor = 'black';
             gameStatus.Value = 'Waiting for Match to Start';
-            % score.Value      = string(0);
-            % goals.Value      = string(0);
-            % assists.Value    = string(0);
-            % saves.Value      = string(0);
-            % shots.Value      = string(0);
-            % demos.Value      = string(0);
-            % touches.Value    = string(0);
-            % carTouches.Value = string(0);
-
             carSpeed.Value = 0;
             carBoost.Value = 0;
         end
     end
-    pause(0.01); % Yield to the system to maintain 100Hz processing loop
+    pause(0.01);
 end
-
 end

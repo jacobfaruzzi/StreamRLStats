@@ -1,24 +1,14 @@
 function [playerData,teammateData,gameData] = getRL_Data(client,player)
 
 if client.NumBytesAvailable > 0
-    % Read the raw stream data
     raw_data = read(client, client.NumBytesAvailable, 'char');
     json_str = char(raw_data);
-
-        % Parse the broadcasted JSON packet
         game_data = jsondecode(json_str);
-
-        % Check if the payload contains player/spectator vehicle data
-        % Note: Exact fields depend on your team/spectator status
         if isfield(game_data, 'Event') && strcmp(game_data.Event, 'UpdateState')
-
             if isfield(game_data, 'Data')
                 Data = jsondecode(game_data.Data);
                 if isfield(Data, 'Players')
                     player_list = Data.Players;
-
-                    % Locate your vehicle's telemetry data block
-                    % (Index 1 is typically you when practicing in Free Play)
                     if ~isempty(player_list)
                         if iscell(player_list)
                             for i = 1:numel(player_list)
@@ -48,7 +38,8 @@ if client.NumBytesAvailable > 0
                     end
                 end
                 if isfield(Data, 'Game')
-                    gameData = Data.Game;                    
+                    gameData = Data.Game;
+                    gameData.Ball.Speed = gameData.Ball.Speed*0.621371;  
                 end
             end
         end    
