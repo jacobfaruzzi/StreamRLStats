@@ -10,6 +10,10 @@ streakNum = 0;
 winNum    = 0;
 lossNum   = 0;
 
+allPlaylistStat(1).streakNum = 0;
+allPlaylistStat(1).winNum = 0;
+allPlaylistStat(1).lossNum = 0;
+
 mainFig = uifigure('Position',[2561 300 847 728.5],'Resize','off','Color',[.2 .2 .2],'WindowStyle','alwaysontop','Name','Rocket Leauge Stats');
 
 gameStatPanel = uipanel(mainFig,'Position',[10 588.8750 827 130],'BackgroundColor','k','BorderColor','k');
@@ -17,12 +21,12 @@ bckground1 = axes(gameStatPanel,'Position',[0 0 1 1],'Units','normalized');
 img = imread('galaxy.jpg');
 imshow(img, 'Parent', bckground1, 'XData', [0 827], 'YData', [0 130]);
 
-wins      = uilabel(gameStatPanel,'Position',[10.0000 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text',string(winNum));
-uilabel(gameStatPanel,'Position',[10.0000 70 92.125 50],'Text','WINS','HorizontalAlignment','center','FontSize',18,'FontColor','y');
-losses      = uilabel(gameStatPanel,'Position',[112.125 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text',string(lossNum));
-uilabel(gameStatPanel,'Position',[112.125 70 92.125 50],'Text','LOSSES','HorizontalAlignment','center','FontSize',18,'FontColor','y');
-streak    = uilabel(gameStatPanel,'Position',[214.250 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text',string(streakNum));
-uilabel(gameStatPanel,'Position',[214.250 70 92.125 50],'Text','STREAK','HorizontalAlignment','center','FontSize',18,'FontColor','y');
+wins      = uilabel(gameStatPanel,'Position',[10.0000 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text',"0/0");
+uilabel(gameStatPanel,'Position',[10.0000 70 92.125 50],'Text',{'CURR/TOT';'WINS'},'HorizontalAlignment','center','FontSize',16,'FontColor','y','WordWrap','on');
+losses      = uilabel(gameStatPanel,'Position',[112.125 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text',"0/0");
+uilabel(gameStatPanel,'Position',[112.125 70 92.125 50],'Text',{'CURR/TOT';'LOSSES'},'HorizontalAlignment','center','FontSize',16,'FontColor','y');
+streak    = uilabel(gameStatPanel,'Position',[214.250 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text',"0/0");
+uilabel(gameStatPanel,'Position',[214.250 70 92.125 50],'Text',{'CURR/TOT';'STREAK'},'HorizontalAlignment','center','FontSize',16,'FontColor','y');
 ball    = uilabel(gameStatPanel,'Position',[316.375 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text','0');
 uilabel(gameStatPanel,'Position',[316.375 70 92.125 50],'Text','BALL SPEED','HorizontalAlignment','center','FontSize',18,'FontColor','y','WordWrap','on');
 teammate1    = uilabel(gameStatPanel,'Position',[418.500 10 92.125 50],'HorizontalAlignment','center','FontSize',20,'FontColor','y','Text','');
@@ -124,27 +128,40 @@ while true
                 end
             end
         end
+        currPlaylist = getCurrPlaylistStat(allPlaylistStat,gameData);
+        wins.Text = string(currPlaylist.winNum)+"/"+string(winNum);
+        losses.Text = string(currPlaylist.lossNum)+"/"+string(lossNum);
+        if currPlaylist.streakNum > 0 && streakNum > 0
+            streak.Text = "+"+string(currPlaylist.streakNum)+"/+"+string(streakNum);
+        elseif currPlaylist.streakNum <= 0 && streakNum > 0
+            streak.Text = string(currPlaylist.streakNum)+"/+"+string(streakNum);
+        elseif currPlaylist.streakNum > 0 && streakNum <= 0
+            streak.Text = "+"+string(currPlaylist.streakNum)+"/"+string(streakNum);
+        else
+            streak.Text = string(currPlaylist.streakNum)+"/"+string(streakNum);
+        end
         if gameData.bHasWinner
             winnerIdx = find(strcmp(gameData.Winner,{gameData.Teams.Name}));
             didWin = playerData.TeamNum == gameData.Teams(winnerIdx).TeamNum;
+            [currPlaylist,allPlaylistStat] = updateCurrPlaylistStat(allPlaylistStat,didWin,gameData);
             if didWin
                 winNum = winNum+1;
-                wins.Text = string(winNum);
+                wins.Text = string(currPlaylist.winNum)+"/"+string(winNum);
                 if streakNum >= 0
                     streakNum = streakNum+1;
                 else
                     streakNum = 1;
                 end
-                streak.Text = "+"+string(streakNum);
+                streak.Text = "+"+string(currPlaylist.streakNum)+"/+"+string(streakNum);
             else
                 lossNum = lossNum+1;
-                losses.Text = string(lossNum);
+                losses.Text = string(currPlaylist.lossNum)+"/"+string(lossNum);
                 if streakNum <= 0
                     streakNum = streakNum-1;
                 else
                     streakNum = -1;
                 end
-                streak.Text = string(streakNum);
+                streak.Text = string(currPlaylist.streakNum)+"/"+string(streakNum);
             end
             gameOver = true;
             gameStatus.BackgroundColor = 'yellow';
